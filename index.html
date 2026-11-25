@@ -1,702 +1,1044 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Classic+ DarkRP — Loading</title>
-<style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: "Trebuchet MS", "Segoe UI", Tahoma, sans-serif;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classic+ DarkRP — Loading</title>
+  <style>
+    /* ============================================================
+       CLASSIC+ DARKRP — FLAT SOURCE / DERMA LOADING SCREEN
+       Zero external libraries, zero images, instant load.
+       ============================================================ */
 
-  html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #0b0f17;
-    color: #ffffff;
-  }
+    :root {
+      --bg-page: #14171b;
+      --bg-panel: #1d2127;
+      --bg-inset: #16191e;
+      --bg-track: #111418;
+      --border: #2c323b;
+      --border-subtle: #252a32;
+      --accent: #2d89d8;
+      --cmd-blue: #4ea3f0;
+      --text-main: #e6ebf1;
+      --text-muted: #9aa4b2;
+    }
 
-  /* Soft blurred backdrop using the active GMod image */
-  .blur-backdrop {
-    position: fixed;
-    top: -24px;
-    right: -24px;
-    bottom: -24px;
-    left: -24px;
-    background: #0b0f17 url("slide1.jpg") center center / cover no-repeat;
-    filter: blur(18px) brightness(0.32) saturate(1.2);
-    z-index: 0;
-    transition: background-image 0.4s ease;
-  }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  .hud-layer {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 2;
-    padding: 20px 30px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+      font-size: 14px;
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+      -webkit-user-select: none;
+    }
 
-  /* TOP BAR */
-  .top-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+    /* Full-viewport container locked for 1280x720 and 1920x1080 */
+    .shell {
+      width: 100%;
+      height: 100vh;
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: 18px 24px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow: hidden;
+    }
 
-  .brand-box {
-    display: flex;
-    align-items: center;
-  }
+    /* ------------------------------------------------------------
+       1. TOP HEADER BAR
+       ------------------------------------------------------------ */
+    .header {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent);
+      border-radius: 4px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-shrink: 0;
+    }
 
-  .gmod-badge {
-    width: 54px;
-    height: 54px;
-    border-radius: 11px;
-    background: linear-gradient(135deg, #00b7ff 0%, #1d64d8 100%);
-    border: 2px solid #ffffff;
-    box-shadow: 0 6px 20px rgba(0, 183, 255, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 25px;
-    font-weight: 900;
-    color: #ffffff;
-    transform: rotate(-4deg);
-    margin-right: 14px;
-  }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
 
-  .brand-titles h1 {
-    font-size: 32px;
-    font-weight: 900;
-    letter-spacing: 1px;
-    line-height: 1;
-    color: #ffffff;
-    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.8);
-  }
+    .brand-badge {
+      width: 40px;
+      height: 40px;
+      background-color: var(--accent);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      flex-shrink: 0;
+    }
 
-  .brand-titles h1 span {
-    color: #3cc7ff;
-  }
+    .brand-text {
+      min-width: 0;
+    }
 
-  .tagline-row {
-    margin-top: 6px;
-    display: flex;
-    align-items: center;
-  }
+    .brand-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-  .tag-pill {
-    display: inline-block;
-    background: rgba(14, 21, 33, 0.9);
-    border: 1px solid rgba(60, 199, 255, 0.55);
-    border-radius: 5px;
-    padding: 2px 8px;
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.7px;
-    color: #9be2ff;
-    margin-right: 6px;
-  }
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-  .tag-pill.gold {
-    border-color: rgba(255, 204, 64, 0.65);
-    color: #ffd86b;
-  }
+    .meta-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
 
-  .tag-pill.green {
-    border-color: rgba(82, 232, 138, 0.6);
-    color: #79f2a4;
-  }
+    .meta-box {
+      background-color: var(--bg-inset);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px 11px;
+      min-width: 82px;
+    }
 
-  .meta-stack {
-    display: flex;
-    align-items: center;
-  }
+    .meta-label {
+      display: block;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      line-height: 1.1;
+    }
 
-  .meta-chip {
-    background: rgba(13, 19, 29, 0.88);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-top: 3px solid #3cc7ff;
-    border-radius: 8px;
-    padding: 7px 13px;
-    margin-left: 10px;
-    text-align: right;
-  }
+    .meta-value {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-top: 2px;
+      white-space: nowrap;
+    }
 
-  .meta-chip.gold { border-top-color: #ffcc40; }
+    /* ------------------------------------------------------------
+       2. MAIN 2-COLUMN GRID
+       ------------------------------------------------------------ */
+    .main-grid {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 14px;
+    }
 
-  .meta-chip small {
-    display: block;
-    font-size: 10px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: #9bb1c9;
-  }
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 0;
+    }
 
-  .meta-chip b {
-    display: block;
-    font-size: 14px;
-    font-weight: 900;
-    color: #ffffff;
-    margin-top: 1px;
-  }
+    /* Shared Flat Derma Panel */
+    .panel {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
 
-  /* MIDDLE CENTER SHOWCASE STAGE */
-  .center-stage {
-    flex: 1;
-    min-height: 0;
-    margin: 14px 0;
-    display: flex;
-    gap: 16px;
-    align-items: stretch;
-  }
+    .panel-header {
+      background-color: var(--bg-inset);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
 
-  .image-stage {
-    position: relative;
-    flex: 1.65;
-    min-height: 0;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #0d131f;
-    border: 2px solid rgba(60, 199, 255, 0.45);
-    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.65);
-  }
+    .panel-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-main);
+    }
 
-  .stage-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: opacity 0.25s ease;
-  }
+    .panel-tag {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
 
-  .stage-caption {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 28px 18px 14px;
-    background: linear-gradient(180deg, transparent 0%, rgba(8, 12, 20, 0.92) 100%);
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-  }
+    .panel-body {
+      padding: 12px 14px;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
 
-  .cap-tag {
-    display: inline-block;
-    background: #2d82d2;
-    color: #ffffff;
-    font-size: 10px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    padding: 2px 7px;
-    border-radius: 4px;
-    margin-bottom: 4px;
-  }
+    /* Server Rules List (8 numbered items) */
+    .rules-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      gap: 6px;
+    }
 
-  .cap-title {
-    font-size: 17px;
-    font-weight: 900;
-    color: #ffffff;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
-  }
+    .rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 6px 8px;
+      background-color: var(--bg-inset);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+    }
 
-  .cap-sub {
-    font-size: 13px;
-    color: #c8d8ea;
-    margin-top: 2px;
-  }
+    .rule-num {
+      width: 20px;
+      height: 20px;
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--cmd-blue);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
 
-  /* Thumbnail strip on right side of gallery */
-  .thumb-col {
-    width: 250px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 8px;
-  }
+    .rule-text {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
 
-  .thumb-card {
-    position: relative;
-    flex: 1;
-    min-height: 0;
-    border-radius: 9px;
-    overflow: hidden;
-    cursor: pointer;
-    border: 2px solid rgba(255, 255, 255, 0.14);
-    background: #121926;
-    transition: border-color 0.2s ease, transform 0.2s ease;
-  }
+    .rule-text strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
 
-  .thumb-card.active {
-    border-color: #3cc7ff;
-    box-shadow: 0 0 16px rgba(60, 199, 255, 0.45);
-  }
+    /* Useful Commands 2-Column Grid */
+    .commands-panel {
+      flex: 1.25;
+    }
 
-  .thumb-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.72;
-    display: block;
-  }
+    .commands-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px 10px;
+      flex: 1;
+      align-content: space-between;
+    }
 
-  .thumb-card.active img {
-    opacity: 1;
-  }
+    .cmd-row {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      padding: 5px 8px;
+      background-color: var(--bg-inset);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      min-width: 0;
+    }
 
-  .thumb-label {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 14px 10px 6px;
-    background: linear-gradient(180deg, transparent 0%, rgba(8, 12, 19, 0.92) 100%);
-    font-size: 12px;
-    font-weight: 800;
-    color: #ffffff;
-  }
+    .cmd-key {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--cmd-blue);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
 
-  /* INFO STRIP ABOVE PROGRESS BAR */
-  .info-strip {
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch;
-    gap: 14px;
-    margin-bottom: 12px;
-  }
+    .cmd-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-  .speech-bubble {
-    flex: 1;
-    background: rgba(14, 21, 33, 0.92);
-    border: 1px solid rgba(60, 199, 255, 0.45);
-    border-left: 4px solid #3cc7ff;
-    border-radius: 9px;
-    padding: 10px 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
+    /* What's On The Server Panel */
+    .features-panel {
+      flex: 0.85;
+    }
 
-  .bubble-who {
-    font-size: 10px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #ffd86b;
-    margin-bottom: 3px;
-  }
+    .features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      gap: 8px;
+    }
 
-  #quipText {
-    font-size: 14px;
-    font-weight: 700;
-    color: #f1f6fc;
-    line-height: 1.3;
-    transition: opacity 0.2s ease;
-  }
+    .feature-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 7px 10px;
+      background-color: var(--bg-inset);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
 
-  .rules-mini {
-    background: rgba(14, 21, 33, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-left: 4px solid #ff5252;
-    border-radius: 9px;
-    padding: 9px 14px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
+    .feature-dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--accent);
+      border-radius: 2px;
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
 
-  .rules-mini-title {
-    font-size: 10px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #ff8484;
-    margin-bottom: 5px;
-  }
+    .feature-row strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
 
-  .rule-pills {
-    display: flex;
-    flex-wrap: wrap;
-    max-width: 480px;
-  }
+    /* ------------------------------------------------------------
+       3. BOTTOM-LEFT LOADING BAR
+       Capped at 68% width so the bottom-right (~30%) remains
+       completely clear for Garry's Mod's built-in status box.
+       ------------------------------------------------------------ */
+    .footer-area {
+      width: 100%;
+      flex-shrink: 0;
+    }
 
-  .r-pill {
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 4px;
-    padding: 3px 8px;
-    font-size: 12px;
-    font-weight: 700;
-    color: #e4edf7;
-    margin: 0 6px 4px 0;
-  }
+    .loading-box {
+      width: 68%;
+      max-width: 68%;
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 10px 14px 11px 14px;
+    }
 
-  .r-pill span {
-    color: #5ee38c;
-  }
+    .tip-line {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding-bottom: 7px;
+      border-bottom: 1px solid var(--border-subtle);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-  /* PHYSGUN GLOW PROGRESS DOCK */
-  .dock {
-    background: rgba(12, 17, 26, 0.94);
-    border: 1px solid rgba(60, 199, 255, 0.38);
-    border-radius: 11px;
-    padding: 13px 20px;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
-  }
+    .tip-prefix {
+      color: var(--cmd-blue);
+      font-weight: 700;
+      margin-right: 6px;
+    }
 
-  .dock-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 8px;
-  }
+    .status-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
 
-  #statusText {
-    font-size: 17px;
-    font-weight: 900;
-    color: #ffffff;
-  }
+    .status-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-  #fileText {
-    font-size: 12px;
-    color: #8fa6c2;
-    margin-top: 2px;
-    max-width: 740px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+    .status-percent {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-shrink: 0;
+    }
 
-  .pct-wrap {
-    text-align: right;
-  }
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background-color: var(--bg-track);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
 
-  #percentText {
-    font-size: 24px;
-    font-weight: 900;
-    color: #3cc7ff;
-    line-height: 1;
-    text-shadow: 0 0 14px rgba(60, 199, 255, 0.55);
-  }
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background-color: var(--accent);
+      transition: width 0.2s linear;
+    }
 
-  #filesCount {
-    font-size: 11px;
-    color: #89a0ba;
-    margin-top: 2px;
-  }
+    .file-line {
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
 
-  .beam-track {
-    width: 100%;
-    height: 12px;
-    background: #1a2436;
-    border-radius: 6px;
-    overflow: hidden;
-    border: 1px solid rgba(60, 199, 255, 0.35);
-  }
+    .file-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-  .beam-fill {
-    position: relative;
-    width: 10%;
-    height: 100%;
-    background: linear-gradient(90deg, #1b6be0 0%, #2eb8ff 65%, #9bf0ff 100%);
-    box-shadow: 0 0 16px rgba(46, 184, 255, 0.85);
-    border-radius: 6px;
-    transition: width 0.25s ease;
-  }
+    .file-count {
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
 
-  .beam-fill::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.45) 50%, transparent 100%);
-    animation: physBeam 1.4s linear infinite;
-  }
+    /* ------------------------------------------------------------
+       RESPONSIVE SCALING (1080p spaciousness & narrow fallback)
+       ------------------------------------------------------------ */
+    @media (min-width: 1600px) and (min-height: 900px) {
+      .shell {
+        padding: 28px 36px 30px 36px;
+        gap: 18px;
+      }
 
-  @keyframes physBeam {
-    0%   { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-  }
+      .header {
+        padding: 16px 20px;
+      }
 
-  .dock-bottom {
-    margin-top: 9px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: #97aec8;
-  }
+      .brand-badge {
+        width: 46px;
+        height: 46px;
+        font-size: 20px;
+      }
 
-  .dock-bottom strong {
-    color: #ffd86b;
-  }
-</style>
+      .brand-title {
+        font-size: 24px;
+      }
+
+      .brand-subtitle {
+        font-size: 13px;
+      }
+
+      .meta-box {
+        padding: 8px 14px;
+      }
+
+      .meta-value {
+        font-size: 14px;
+      }
+
+      .main-grid {
+        gap: 18px;
+      }
+
+      .right-col {
+        gap: 18px;
+      }
+
+      .panel-header {
+        padding: 10px 16px;
+      }
+
+      .panel-body {
+        padding: 16px;
+      }
+
+      .rule-item {
+        padding: 10px 12px;
+      }
+
+      .rule-text,
+      .feature-row {
+        font-size: 14px;
+      }
+
+      .cmd-row {
+        padding: 8px 11px;
+      }
+
+      .cmd-key,
+      .cmd-desc {
+        font-size: 13px;
+      }
+
+      .loading-box {
+        padding: 14px 18px;
+      }
+
+      .tip-line,
+      .status-text,
+      .status-percent {
+        font-size: 14px;
+      }
+
+      .progress-track {
+        height: 14px;
+      }
+
+      .file-line {
+        font-size: 12px;
+      }
+    }
+
+    /* Graceful stacking on mobile / narrow browser previews */
+    @media (max-width: 960px) {
+      .shell {
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+        padding: 14px;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .meta-group {
+        width: 100%;
+        flex-wrap: wrap;
+      }
+
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .commands-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .loading-box {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="blur-backdrop" id="blurBg"></div>
+  <div class="shell">
 
-  <div class="hud-layer">
-    <!-- TOP HEADER -->
-    <div class="top-row">
-      <div class="brand-box">
-        <div class="gmod-badge">C+</div>
-        <div class="brand-titles">
-          <h1>CLASSIC<span>+</span> DARKRP</h1>
-          <div class="tagline-row">
-            <span class="tag-pill">Tight Economy</span>
-            <span class="tag-pill gold">Casino & Bitminers</span>
-            <span class="tag-pill green">Gangs & Turfs</span>
+    <!-- ==========================================================
+         1. TOP HEADER BAR
+         ========================================================== -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-badge">C+</div>
+        <div class="brand-text">
+          <h1 id="server-name" class="brand-title">Classic+ DarkRP</h1>
+          <div class="brand-subtitle">Hard Economy  |  M9K Weapons  |  Custom Jobs  |  Active Staff</div>
+        </div>
+      </div>
+
+      <div class="meta-group">
+        <div class="meta-box">
+          <span class="meta-label">Map</span>
+          <span id="meta-map" class="meta-value">rp_downtown_tits_v2</span>
+        </div>
+        <div class="meta-box">
+          <span class="meta-label">Gamemode</span>
+          <span id="meta-mode" class="meta-value">DarkRP</span>
+        </div>
+        <div class="meta-box">
+          <span class="meta-label">Slots</span>
+          <span id="meta-slots" class="meta-value">32</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ==========================================================
+         2. MAIN 2-COLUMN GRID
+         ========================================================== -->
+    <main class="main-grid">
+
+      <!-- LEFT PANEL: SERVER RULES -->
+      <section class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Server Rules</h2>
+          <span class="panel-tag">!rules</span>
+        </div>
+        <div class="panel-body">
+          <ol class="rules-list">
+            <li class="rule-item">
+              <span class="rule-num">1</span>
+              <span class="rule-text"><strong>No RDM / RDA</strong> &mdash; Have a valid RP reason (raid, mug, hit, self-defense, bank heist).</span>
+            </li>
+            <li class="rule-item">
+              <span class="rule-num">2</span>
+              <span class="rule-text"><strong>3-Minute NLR</strong> &mdash; Stay away from your death area for 3 minutes or until the raid ends.</span>
+            </li>
+            <li class="rule-item">
+              <span class="rule-num">3</span>
+              <span class="rule-text"><strong>Fair Basing</strong> &mdash; Max 2 fading doors per entrance, 4s+ keypad hold, no crouch mazes.</span>
+            </li>
+            <li class="rule-item">
+              <span class="rule-num">4</span>
+              <span class="rule-text"><strong>No Prop Abuse</strong> &mdash; No prop-blocking, prop-killing, prop-surfing, or invisible props.</span>
+            </li>
+            <li class="rule-item">
+              <span class="rule-num">5</span>
+              <span class="rule-text"><strong>Advert Actions</strong> &mdash; Use /advert Raid, /advert Mug ($1,500 max), or /advert Counter first.</span>
+            </li>
+            <li class="rule-item">
+              <span class="rule-num">6</span>
+              <span class="rule-text"><strong>Printers &amp; Bank</strong> &mdash; Defend your base; anyone can counter a Downtown Bank Vault heist.</span>
+            </li>
+            <li class="rule-item">
+              <span class="rule-num">7</span>
+              <span class="rule-text"><strong>No Job Abuse / LTAP</strong> &mdash; Don't self-supply weapons or disconnect mid-raid or mid-sit.</span>
+            </li>
+            <li class="rule-item">
+              <span class="rule-num">8</span>
+              <span class="rule-text"><strong>Respect Players &amp; Staff</strong> &mdash; RP trash talk is fine; slurs, harassment, and exploits are a ban.</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: USEFUL COMMANDS + WHAT'S ON THE SERVER -->
+      <div class="right-col">
+
+        <!-- TOP PANEL: USEFUL COMMANDS -->
+        <section class="panel commands-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Useful Commands</h2>
+            <span class="panel-tag">Chat / Bind</span>
           </div>
-        </div>
-      </div>
-
-      <div class="meta-stack">
-        <div class="meta-chip">
-          <small>Map</small>
-          <b id="mapName">rp_downtown_tits_v2</b>
-        </div>
-        <div class="meta-chip gold">
-          <small>Slots</small>
-          <b id="slotsText">32 Players</b>
-        </div>
-      </div>
-    </div>
-
-    <!-- CENTER GMOD SCREENSHOT STAGE -->
-    <div class="center-stage">
-      <div class="image-stage">
-        <img class="stage-img" id="mainImg" src="slide1.jpg" alt="Classic+ GMod Scene">
-        <div class="stage-caption">
-          <div>
-            <div class="cap-tag" id="capTag">CLASSIC GMOD VIBES</div>
-            <div class="cap-title" id="capTitle">Downtown Shenanigans & Serious RP</div>
-            <div class="cap-sub" id="capSub">Built for old-school DarkRP players who miss clean, fun servers.</div>
+          <div class="panel-body">
+            <div class="commands-grid">
+              <div class="cmd-row">
+                <span class="cmd-key">F4</span>
+                <span class="cmd-desc">Jobs, Entities &amp; Job Guides [i]</span>
+              </div>
+              <div class="cmd-row">
+                <span class="cmd-key">!starter</span>
+                <span class="cmd-desc">New player checklist (+$2,500)</span>
+              </div>
+              <div class="cmd-row">
+                <span class="cmd-key">!gps</span>
+                <span class="cmd-desc">3D waypoints to NPCs &amp; Bank</span>
+              </div>
+              <div class="cmd-row">
+                <span class="cmd-key">!trade</span>
+                <span class="cmd-desc">Safe 2-step weapon/cash trade</span>
+              </div>
+              <div class="cmd-row">
+                <span class="cmd-key">!top</span>
+                <span class="cmd-desc">Leaderboards &amp; Playtime cash</span>
+              </div>
+              <div class="cmd-row">
+                <span class="cmd-key">!events</span>
+                <span class="cmd-desc">Manhunt, Auctions &amp; Lottery</span>
+              </div>
+              <div class="cmd-row">
+                <span class="cmd-key">!methhelp</span>
+                <span class="cmd-desc">Meth Lab recipes &amp; market</span>
+              </div>
+              <div class="cmd-row">
+                <span class="cmd-key">!daily</span>
+                <span class="cmd-desc">7-day streak &amp; !contracts</span>
+              </div>
+              <div class="cmd-row">
+                <span class="cmd-key">!inv</span>
+                <span class="cmd-desc">Persistent storage (or hold C)</span>
+              </div>
+              <div class="cmd-row">
+                <span class="cmd-key">!fixerrors</span>
+                <span class="cmd-desc">Mount missing content</span>
+              </div>
+              <div class="cmd-row">
+                <span class="cmd-key">!discord</span>
+                <span class="cmd-desc">Discord invite &amp; !link (+$1k)</span>
+              </div>
+              <div class="cmd-row">
+                <span class="cmd-key">!report</span>
+                <span class="cmd-desc">Call Staff / open ticket</span>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      <div class="thumb-col" id="thumbCol">
-        <div class="thumb-card active" data-idx="0">
-          <img src="slide1.jpg" alt="Scene 1">
-          <div class="thumb-label">1. Classic Faces</div>
-        </div>
-        <div class="thumb-card" data-idx="1">
-          <img src="slide2.jpg" alt="Scene 2">
-          <div class="thumb-label">2. "Hardly Working"</div>
-        </div>
-        <div class="thumb-card" data-idx="2">
-          <img src="slide3.jpg" alt="Scene 3">
-          <div class="thumb-label">3. Physgun & Rooftops</div>
-        </div>
-        <div class="thumb-card" data-idx="3">
-          <img src="slide4.jpg" alt="Scene 4">
-          <div class="thumb-label">4. CP Patrol</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- BOTTOM QUIPS, RULES & PROGRESS BAR -->
-    <div>
-      <div class="info-strip">
-        <div class="speech-bubble">
-          <div class="bubble-who" id="quipWho">CLASSIC+ TIP</div>
-          <div id="quipText">"Store your expensive M9K guns in a Personal Gun Locker — dying drops your equipped rifle!"</div>
-        </div>
-
-        <div class="rules-mini">
-          <div class="rules-mini-title">Quick Rules & Commands (!rules for full list)</div>
-          <div class="rule-pills">
-            <div class="r-pill">No RDM / RDA</div>
-            <div class="r-pill">3-Min NLR</div>
-            <div class="r-pill">Max 2 Fading Doors</div>
-            <div class="r-pill"><span>!daily</span> Streak</div>
-            <div class="r-pill"><span>!gang</span> Crews</div>
-            <div class="r-pill"><span>!shop</span> Prestige</div>
-            <div class="r-pill"><span>!report</span> Staff</div>
+        <!-- BOTTOM PANEL: WHAT'S ON THE SERVER -->
+        <section class="panel features-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">What's On The Server</h2>
+            <span class="panel-tag">0MB Stock HL2</span>
           </div>
+          <div class="panel-body">
+            <ul class="features-list">
+              <li class="feature-row">
+                <span class="feature-dot"></span>
+                <span><strong>Legal Trades:</strong> Ore Miner (8 tiers), Deep-Sea Diver (8 rigs), Fisherman, Bio-Cleaner, Armored Courier &amp; Banker.</span>
+              </li>
+              <li class="feature-row">
+                <span class="feature-dot"></span>
+                <span><strong>Underworld:</strong> Custom Meth Lab, GrowOP 2 Weed, Moonshine Stills, Printers, Bitminers 2 &amp; Bank Vault Heists.</span>
+              </li>
+              <li class="feature-row">
+                <span class="feature-dot"></span>
+                <span><strong>Extras:</strong> Gang Turf (!gang), 1v1 M9K Duels (!duel), Casino Floor, Safe Spawn &amp; Auto Anti-Stuck.</span>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- ==========================================================
+         3. BOTTOM-LEFT LOADING BAR
+         Max-width 68% keeps bottom-right (~30%) empty for GMod.
+         ========================================================== -->
+    <footer class="footer-area">
+      <div class="loading-box">
+        <div class="tip-line">
+          <span class="tip-prefix">Tip:</span>
+          <span id="tip-text">New to the server? Type !starter to complete the 4-step checklist and earn $2,500.</span>
+        </div>
+
+        <div class="status-row">
+          <span id="load-status" class="status-text">Connecting to Classic+ DarkRP...</span>
+          <span id="load-percent" class="status-percent">0%</span>
+        </div>
+
+        <div class="progress-track">
+          <div id="load-bar" class="progress-fill"></div>
+        </div>
+
+        <div class="file-line">
+          <span id="load-file" class="file-name">Waiting for server response...</span>
+          <span id="load-files-count" class="file-count"></span>
         </div>
       </div>
+    </footer>
 
-      <div class="dock">
-        <div class="dock-top">
-          <div>
-            <div id="statusText">Warming up the Money Printers...</div>
-            <div id="fileText">Connecting to Classic+ DarkRP</div>
-          </div>
-          <div class="pct-wrap">
-            <div id="percentText">10%</div>
-            <div id="filesCount">Preparing FastDL...</div>
-          </div>
-        </div>
-
-        <div class="beam-track">
-          <div class="beam-fill" id="barFill"></div>
-        </div>
-
-        <div class="dock-bottom">
-          <span>Press <strong>F4</strong> for Jobs, Bitminers & Shop  •  Type <strong>!stuck</strong> if trapped in a prop</span>
-          <span id="discordText">Discord: <strong>Type !discord in-game</strong></span>
-        </div>
-      </div>
-    </div>
   </div>
 
+  <!-- ============================================================
+       GARRY'S MOD LOADING CALLBACKS, QUERY PARSER & QUIET TIPS
+       ============================================================ -->
   <script>
-    var SLIDES = [
-      {
-        src: "slide1.jpg",
-        tag: "NOSTALGIC GMOD",
-        title: "Classic Source Humor, Modern Classic+ Systems",
-        sub: "Gangs, Turfs, Casino, Bitminers 2 & Moonshine — all tuned for a tight economy."
-      },
-      {
-        src: "slide2.jpg",
-        tag: "PRINTERS & GRIND",
-        title: "\"Hardly Working\" — Printers, Bitminers & Moonshine",
-        sub: "Upgrade printers with Shift+E & Alt+E, wire Bitminers on any job, or vent High-Proof batches."
-      },
-      {
-        src: "slide3.jpg",
-        tag: "GUN LOCKERS & LOOT",
-        title: "Guns Are Valuable — Lock Them Up Between Sessions",
-        sub: "Store up to 3 bought M9K weapons safely in a Personal Gun Locker downtown."
-      },
-      {
-        src: "slide4.jpg",
-        tag: "POLICE & MAYOR",
-        title: "CP Bounties, PD Bail Desk & City Treasury",
-        sub: "Earn arrest bounties on Wanted suspects, bust illegal stills & printers, or bail out friends."
+    (function () {
+      'use strict';
+
+      /* --- DOM References --- */
+      var elServerName = document.getElementById('server-name');
+      var elMetaMap    = document.getElementById('meta-map');
+      var elMetaMode   = document.getElementById('meta-mode');
+      var elMetaSlots  = document.getElementById('meta-slots');
+      var elTipText    = document.getElementById('tip-text');
+      var elStatus     = document.getElementById('load-status');
+      var elPercent    = document.getElementById('load-percent');
+      var elBar        = document.getElementById('load-bar');
+      var elFile       = document.getElementById('load-file');
+      var elFileCount  = document.getElementById('load-files-count');
+
+      /* --- Quiet Rotating Tips (Every 7 Seconds) --- */
+      var TIPS = [
+        'New to the server? Type !starter to complete the 4-step checklist and earn $2,500.',
+        'Not sure where an NPC is? Type !gps to put a 3D waypoint on Buyers, Traders, Docks, and the Bank.',
+        'Trading weapons or cash? Use !trade for a scam-proof 2-step locked trade window.',
+        'Type !top to view server leaderboards and track automatic Playtime Loyalty cash milestones.',
+        'Seeing missing textures or errors? Type !fixerrors in chat for mounting instructions.',
+        'Type !discord or !link in chat to link your Discord account and claim a $1,000 bonus.',
+        'Unsure how a job works? Open F4 and click the [i] button next to any job for a full guide.'
+      ];
+      var tipIndex = 0;
+
+      function rotateTip() {
+        tipIndex = (tipIndex + 1) % TIPS.length;
+        if (elTipText) {
+          elTipText.textContent = TIPS[tipIndex];
+        }
       }
-    ];
+      window.setInterval(rotateTip, 7000);
 
-    var QUIPS = [
-      { who: "CITIZEN TIP", text: "\"Bought an M9K rifle? Bank it in a Personal Gun Locker downtown before SWAT shows up!\"" },
-      { who: "METROCOP ON PATROL", text: "\"Arrest Wanted suspects for extra cash bounties or confiscate illegal Moonshine Stills!\"" },
-      { who: "DOWNTOWN HOBO", text: "\"Dig through alley dumpsters and sell to the Pawn Buyer — Hobos make +25% extra cash!\"" },
-      { who: "CASINO DEALER", text: "\"Hit Triple 7s on the Slot Machines to drain the server-wide Progressive Jackpot — or try Blackjack!\"" },
-      { who: "GANG BOSS", text: "\"Save $35,000, type !gang to start a crew, and capture Downtown Turf Terminals for squad payouts!\"" },
-      { who: "BITMINER TECH", text: "\"Any job can wire up Bitminers 2 from F4 -> Entities. Just keep that generator fueled!\"" }
-    ];
+      /* --- Loading State --- */
+      var state = {
+        liveGmod: false,
+        filesTotal: 0,
+        filesNeeded: 0,
+        percent: 0,
+        status: 'Connecting to Classic+ DarkRP...',
+        currentFile: 'Waiting for server response...',
+        demoStartTimer: null,
+        demoStepTimer: null
+      };
 
-    var slideIdx = 0;
-    var mainImg  = document.getElementById("mainImg");
-    var blurBg   = document.getElementById("blurBg");
-    var capTag   = document.getElementById("capTag");
-    var capTitle = document.getElementById("capTitle");
-    var capSub   = document.getElementById("capSub");
-    var thumbs   = document.querySelectorAll(".thumb-card");
+      /* Helper to stop browser-preview demo the instant any real GMod callback fires */
+      function enterLiveGmodMode() {
+        if (state.liveGmod) return;
+        state.liveGmod = true;
 
-    function setSlide(idx) {
-      slideIdx = (idx + SLIDES.length) % SLIDES.length;
-      var s = SLIDES[slideIdx];
-      mainImg.style.opacity = 0.25;
-      setTimeout(function () {
-        mainImg.src = s.src;
-        blurBg.style.backgroundImage = 'url("' + s.src + '")';
-        capTag.innerText = s.tag;
-        capTitle.innerText = s.title;
-        capSub.innerText = s.sub;
-        mainImg.style.opacity = 1;
-      }, 120);
+        if (state.demoStartTimer) {
+          window.clearTimeout(state.demoStartTimer);
+          state.demoStartTimer = null;
+        }
+        if (state.demoStepTimer) {
+          window.clearInterval(state.demoStepTimer);
+          state.demoStepTimer = null;
+        }
 
-      for (var i = 0; i < thumbs.length; i++) {
-        thumbs[i].className = "thumb-card" + (i === slideIdx ? " active" : "");
+        // Reset simulated counters so live GMod data drives the bar cleanly
+        state.filesTotal = 0;
+        state.filesNeeded = 0;
+        state.percent = 0;
       }
-    }
 
-    for (var t = 0; t < thumbs.length; t++) {
-      thumbs[t].addEventListener("click", function () {
-        setSlide(parseInt(this.getAttribute("data-idx"), 10));
-      });
-    }
+      /* Render current loading state into the DOM */
+      function updateLoadingBar() {
+        var pct = Math.max(0, Math.min(100, Math.round(state.percent)));
+        if (elStatus)  elStatus.textContent = state.status;
+        if (elPercent) elPercent.textContent = pct + '%';
+        if (elBar)     elBar.style.width = pct + '%';
+        if (elFile)    elFile.textContent = state.currentFile;
 
-    setInterval(function () {
-      setSlide(slideIdx + 1);
-    }, 5000);
-
-    var qIdx = 0;
-    var qWho = document.getElementById("quipWho");
-    var qTxt = document.getElementById("quipText");
-    setInterval(function () {
-      qIdx = (qIdx + 1) % QUIPS.length;
-      qTxt.style.opacity = 0;
-      setTimeout(function () {
-        qWho.innerText = QUIPS[qIdx].who;
-        qTxt.innerText = QUIPS[qIdx].text;
-        qTxt.style.opacity = 1;
-      }, 200);
-    }, 5500);
-
-    // GMod Loading Callbacks
-    var filesTotal  = 0;
-    var filesNeeded = 0;
-    var maxPct      = 10;
-
-    function setProgress(pct) {
-      pct = Math.max(maxPct, Math.min(100, Math.round(pct)));
-      maxPct = pct;
-      document.getElementById("barFill").style.width = pct + "%";
-      document.getElementById("percentText").innerText = pct + "%";
-    }
-
-    function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
-      if (mapname) document.getElementById("mapName").innerText = mapname;
-      if (maxplayers) document.getElementById("slotsText").innerText = maxplayers + " Players";
-    }
-
-    function SetFilesTotal(total) {
-      filesTotal = Math.max(filesTotal, parseInt(total, 10) || 0);
-      refreshFiles();
-    }
-
-    function SetFilesNeeded(needed) {
-      filesNeeded = Math.max(0, parseInt(needed, 10) || 0);
-      if (filesNeeded > filesTotal) filesTotal = filesNeeded;
-      refreshFiles();
-    }
-
-    function refreshFiles() {
-      if (filesTotal <= 0) return;
-      var done = Math.max(0, filesTotal - filesNeeded);
-      setProgress(12 + (done / filesTotal) * 73);
-      document.getElementById("filesCount").innerText = done + " / " + filesTotal + " files";
-    }
-
-    function DownloadingFile(fileName) {
-      if (!fileName) return;
-      document.getElementById("fileText").innerText = "Downloading: " + fileName;
-    }
-
-    function SetStatusChanged(status) {
-      if (!status) return;
-      document.getElementById("statusText").innerText = status;
-
-      var s = status.toLowerCase();
-      if (s.indexOf("retrieving") !== -1) {
-        setProgress(22);
-      } else if (s.indexOf("workshop") !== -1) {
-        setProgress(40);
-      } else if (s.indexOf("sending client info") !== -1) {
-        document.getElementById("fileText").innerText = "Finalizing player spawn & DarkRP HUD...";
-        setProgress(92);
-      } else if (s.indexOf("starting lua") !== -1) {
-        document.getElementById("fileText").innerText = "Loading Classic+ DarkRP systems...";
-        setProgress(97);
+        if (elFileCount) {
+          if (state.filesTotal > 0) {
+            var downloaded = Math.max(0, state.filesTotal - state.filesNeeded);
+            elFileCount.textContent = downloaded + ' / ' + state.filesTotal + ' files';
+          } else {
+            elFileCount.textContent = '';
+          }
+        }
       }
-    }
+
+      /* Estimate progress from standard GMod status strings when filesTotal is 0 */
+      function progressFromStatus(text) {
+        if (!text) return state.percent;
+        var s = text.toLowerCase();
+        if (s.indexOf('retrieving') !== -1) return Math.max(state.percent, 15);
+        if (s.indexOf('workshop') !== -1 && s.indexOf('complete') === -1) return Math.max(state.percent, 35);
+        if (s.indexOf('mounting') !== -1) return Math.max(state.percent, 55);
+        if (s.indexOf('workshop complete') !== -1) return Math.max(state.percent, 65);
+        if (s.indexOf('downloading') !== -1) return Math.max(state.percent, 50);
+        if (s.indexOf('sending client info') !== -1 || s.indexOf('client info') !== -1) return Math.max(state.percent, 85);
+        if (s.indexOf('starting lua') !== -1) return Math.max(state.percent, 95);
+        if (s.indexOf('lua started') !== -1) return 100;
+        return Math.min(90, Math.max(state.percent, state.percent + 5));
+      }
+
+      /* Format gamemode label nicely */
+      function formatGamemode(gm) {
+        if (!gm || typeof gm !== 'string') return 'DarkRP';
+        var clean = gm.trim();
+        if (clean.toLowerCase() === 'darkrp') return 'DarkRP';
+        return clean.charAt(0).toUpperCase() + clean.slice(1);
+      }
+
+      /* --- Parse ?map= and ?steamid= Query Parameters on Load --- */
+      function parseQueryParams() {
+        try {
+          var query = window.location.search;
+          if (!query || query.length < 2) return;
+
+          var mapParam = null;
+          var steamParam = null;
+
+          if (typeof URLSearchParams === 'function') {
+            var params = new URLSearchParams(query);
+            mapParam = params.get('map') || params.get('mapname');
+            steamParam = params.get('steamid');
+          } else {
+            // Legacy fallback parser
+            var pairs = query.substring(1).split('&');
+            for (var i = 0; i < pairs.length; i++) {
+              var kv = pairs[i].split('=');
+              var key = decodeURIComponent(kv[0] || '').toLowerCase();
+              var val = decodeURIComponent((kv[1] || '').replace(/\+/g, ' '));
+              if (key === 'map' || key === 'mapname') mapParam = val;
+              if (key === 'steamid') steamParam = val;
+            }
+          }
+
+          if (mapParam && mapParam.trim() !== '' && mapParam.indexOf('%') === -1) {
+            if (elMetaMap) elMetaMap.textContent = mapParam.trim();
+          }
+
+          if (steamParam && steamParam.trim() !== '' && steamParam.indexOf('%') === -1) {
+            state.currentFile = 'Authenticated SteamID: ' + steamParam.trim();
+            updateLoadingBar();
+          }
+        } catch (err) {
+          // Ignore malformed URL parameters safely
+        }
+      }
+
+      /* ==========================================================
+         OFFICIAL GARRY'S MOD LOADING SCREEN CALLBACKS ON WINDOW
+         ========================================================== */
+      window.GameDetails = function (servername, serverurl, mapname, maxplayers, steamid, gamemode) {
+        try {
+          enterLiveGmodMode();
+
+          if (servername && typeof servername === 'string' && servername.trim() !== '') {
+            if (elServerName) elServerName.textContent = servername.trim();
+          }
+          if (mapname && typeof mapname === 'string' && mapname.trim() !== '' && mapname.indexOf('%') === -1) {
+            if (elMetaMap) elMetaMap.textContent = mapname.trim();
+          }
+          if (gamemode && typeof gamemode === 'string' && gamemode.trim() !== '') {
+            if (elMetaMode) elMetaMode.textContent = formatGamemode(gamemode);
+          }
+          if (maxplayers && Number(maxplayers) > 0) {
+            if (elMetaSlots) elMetaSlots.textContent = String(maxplayers);
+          }
+
+          state.status = 'Connected — Retrieving server info...';
+          state.percent = Math.max(state.percent, 10);
+          updateLoadingBar();
+        } catch (err) {}
+      };
+
+      window.SetFilesTotal = function (total) {
+        try {
+          enterLiveGmodMode();
+          var num = parseInt(total, 10);
+          if (!isNaN(num) && num >= 0) {
+            state.filesTotal = num;
+            if (state.filesNeeded > state.filesTotal) {
+              state.filesNeeded = state.filesTotal;
+            }
+          }
+          updateLoadingBar();
+        } catch (err) {}
+      };
+
+      window.SetFilesNeeded = function (needed) {
+        try {
+          enterLiveGmodMode();
+          var num = parseInt(needed, 10);
+          if (!isNaN(num) && num >= 0) {
+            state.filesNeeded = num;
+            if (state.filesTotal < num) {
+              state.filesTotal = num;
+            }
+            if (state.filesTotal > 0) {
+              var done = Math.max(0, state.filesTotal - state.filesNeeded);
+              var pct = 10 + (done / state.filesTotal) * 78;
+              state.percent = Math.max(state.percent, pct);
+            }
+          }
+          updateLoadingBar();
+        } catch (err) {}
+      };
+
+      window.DownloadingFile = function (fileName) {
+        try {
+          enterLiveGmodMode();
+          if (fileName && typeof fileName === 'string') {
+            state.status = 'Downloading server files...';
+            state.currentFile = fileName;
+          }
+          updateLoadingBar();
+        } catch (err) {}
+      };
+
+      window.SetStatusChanged = function (status) {
+        try {
+          enterLiveGmodMode();
+          if (status && typeof status === 'string') {
+            state.status = status;
+            if (state.filesTotal === 0 || status.toLowerCase().indexOf('lua') !== -1 || status.toLowerCase().indexOf('client info') !== -1) {
+              state.percent = progressFromStatus(status);
+            }
+            if (status.toLowerCase().indexOf('starting lua') !== -1) {
+              state.currentFile = 'Loading DarkRP gamemode and client Lua...';
+            } else if (status.toLowerCase().indexOf('sending client info') !== -1) {
+              state.currentFile = 'Syncing player data and map entities...';
+            }
+          }
+          updateLoadingBar();
+        } catch (err) {}
+      };
+
+      /* ==========================================================
+         LIGHTWEIGHT BROWSER-PREVIEW DEMO (AUTO-DISABLED IN GMOD)
+         ========================================================== */
+      var DEMO_STEPS = [
+        { pct: 12, done: 2,  total: 18, status: 'Retrieving server info...', file: 'rp_downtown_tits_v2.bsp (verified)' },
+        { pct: 28, done: 5,  total: 18, status: 'Downloading server files...', file: 'addons/classic_methlab/lua/autorun/sh_classic_methlab.lua' },
+        { pct: 46, done: 9,  total: 18, status: 'Downloading server files...', file: 'addons/classic_mining/lua/autorun/client/cl_classic_mining.lua' },
+        { pct: 64, done: 13, total: 18, status: 'Downloading server files...', file: 'addons/classic_diving/lua/autorun/client/cl_classic_diving.lua' },
+        { pct: 79, done: 16, total: 18, status: 'Downloading server files...', file: 'addons/classic_fishing/lua/weapons/weapon_classic_fishingrod.lua' },
+        { pct: 88, done: 18, total: 18, status: 'Sending client info...', file: 'addons/classic_ui/lua/autorun/client/cl_classic_f4menu.lua' },
+        { pct: 96, done: 18, total: 18, status: 'Starting Lua...', file: 'Loading DarkRP gamemode and client Lua...' }
+      ];
+
+      function startBrowserPreviewDemo() {
+        if (state.liveGmod) return;
+        var idx = 0;
+
+        function runStep() {
+          if (state.liveGmod) return;
+          var s = DEMO_STEPS[idx];
+          state.percent = s.pct;
+          state.filesTotal = s.total;
+          state.filesNeeded = Math.max(0, s.total - s.done);
+          state.status = s.status;
+          state.currentFile = s.file;
+          updateLoadingBar();
+          idx = (idx + 1) % DEMO_STEPS.length;
+        }
+
+        runStep();
+        state.demoStepTimer = window.setInterval(runStep, 2200);
+      }
+
+      /* --- Initialize on Load --- */
+      window.onload = function () {
+        parseQueryParams();
+        updateLoadingBar();
+        // Start preview loop only if GMod hasn't invoked any real hook within 1 second
+        state.demoStartTimer = window.setTimeout(startBrowserPreviewDemo, 1000);
+      };
+    })();
   </script>
 </body>
 </html>
